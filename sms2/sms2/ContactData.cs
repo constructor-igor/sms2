@@ -12,5 +12,15 @@ namespace sms2
 			PhoneNumber = phoneNumber;
 		}
 	}
+
+	public class ContactDataFormatter
+	{
+		public static string Format(ContactData contactData)
+		{
+			if (contactData == null)
+				return "<Select contact>";
+			return String.Format ("{0}: {1}", contactData.DisplayedName, contactData.PhoneNumber);
+		}
+	}
 }
 

@@ -31,7 +31,7 @@ namespace sms2
 			// Get our button from the layout resource,
 			// and attach an event to it
 			selectContactButton = FindViewById<Button> (Resource.Id.selectContactButton);
-			selectContactButton.Text = "<Select contact>";
+			selectContactButton.Text = ContactDataFormatter.Format (contactData);
 
 			selectContactButton.Click += delegate {
 				//Create a new intent for choosing a contact
@@ -70,7 +70,7 @@ namespace sms2
 
 				contactData = new ContactData (displayName, phoneNumber);
 
-				selectContactButton.Text = String.Format ("{0}: {1}", contactData.DisplayedName, contactData.PhoneNumber);
+				selectContactButton.Text = ContactDataFormatter.Format (contactData);
 			}
 		}
 	}
