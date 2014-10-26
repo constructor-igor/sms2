@@ -23,11 +23,13 @@ namespace sms2
 
 			// Get our button from the layout resource,
 			// and attach an event to it
-			Button button = FindViewById<Button> (Resource.Id.myButton);
-			
-			button.Click += delegate {
-				button.Text = string.Format ("{0} clicks!", count++);
+			Button selectContactButton = FindViewById<Button> (Resource.Id.selectContactButton);
+
+/*
+			selectContactButton.Click += delegate {
+				selectContactButton.Text = string.Format ("{0} clicks!", count++);
 			};
+*/			
 		}
 	}
 }

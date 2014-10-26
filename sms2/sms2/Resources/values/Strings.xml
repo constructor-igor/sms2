@@ -2,4 +2,5 @@
 <resources>
 	<string name="hello">Hello World, Click Me!</string>
 	<string name="app_name">sms2</string>
+	<string name="select_Contact">Select contact</string>
 </resources>
