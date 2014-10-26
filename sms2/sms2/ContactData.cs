@@ -6,6 +6,13 @@ namespace sms2
 	{
 		public string DisplayedName { get; private set; }
 		public string PhoneNumber { get; private set; }
+		public bool Empty
+		{
+			get 
+			{
+				return String.IsNullOrWhiteSpace (DisplayedName) && String.IsNullOrEmpty (PhoneNumber);
+			}
+		}
 		public ContactData (string displayedName, string phoneNumber)
 		{
 			DisplayedName = displayedName;
@@ -17,10 +24,9 @@ namespace sms2
 	{
 		public static string Format(ContactData contactData)
 		{
-			if (contactData == null)
+			if (contactData == null || contactData.Empty)
 				return "<Select contact>";
 			return String.Format ("{0}: {1}", contactData.DisplayedName, contactData.PhoneNumber);
 		}
 	}
 }
-

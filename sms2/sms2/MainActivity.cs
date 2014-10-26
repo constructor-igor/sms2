@@ -12,6 +12,45 @@ using Android.Util;
 
 namespace sms2
 {
+	public class SettingsData
+	{
+		public ContactData ContactData { get; private set; }
+		public MessageItem Message { get; private set; }
+		public SettingsData (ContactData contactData, MessageItem message)
+		{
+			ContactData = contactData;
+			Message = message;
+		}
+	}
+
+	public class SettingsLoader
+	{
+		static public void Save(SettingsData settingsData)
+		{
+			var prefs = Application.Context.GetSharedPreferences ("sms2", Android.Content.FileCreationMode.Private);
+			var prefEditor = prefs.Edit ();
+			prefEditor.PutInt ("version", 2);
+			prefEditor.PutString ("name", settingsData.ContactData.DisplayedName);
+			prefEditor.PutString ("number", settingsData.ContactData.PhoneNumber);
+			prefEditor.PutString ("message", settingsData.Message.Message);
+			prefEditor.Commit ();
+		}
+		static public SettingsData Load()
+		{
+			var prefs = Application.Context.ApplicationContext.GetSharedPreferences ("sms2", Android.Content.FileCreationMode.Private);
+			int version = prefs.GetInt ("version", 0);
+			switch (version) {
+				case 2:
+					string displayedName = prefs.GetString ("name", "");
+					string phoneNumber = prefs.GetString ("number", "");
+					string message = prefs.GetString ("message", "");
+					return new SettingsData (new ContactData (displayedName, phoneNumber), new MessageItem (message));
+				default:
+					return new SettingsData (new ContactData (null, null), new MessageItem (null));
+			}
+		}
+	}
+
 	[Activity (Label = "sms2", MainLauncher = true, Icon = "@drawable/icon")]
 	public class MainActivity : Activity
 	{
@@ -30,6 +69,10 @@ namespace sms2
 
 			// Set our view from the "main" layout resource
 			SetContentView (Resource.Layout.Main);
+					
+			SettingsData settingsData = SettingsLoader.Load ();
+			contactData = settingsData.ContactData;
+			messageItem = settingsData.Message;
 
 			// Get our button from the layout resource,
 			// and attach an event to it
@@ -73,6 +116,13 @@ namespace sms2
 					SelectContactHandling (resultCode, data);
 				break;
 			}
+		}
+
+		protected override void OnDestroy()
+		{
+			messageItem = new MessageItem (messageEditText.Text);
+			SettingsLoader.Save(new SettingsData(contactData, messageItem));
+			base.OnDestroy ();
 		}
 
 		void SelectContactHandling(Result resultCode, Intent data)
