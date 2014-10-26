@@ -18,8 +18,11 @@ namespace sms2
 		const int SELECT_CONTACT_SUCCESS_RESULT = 101;
 
 		ContactData contactData = null;
+		MessageItem messageItem = null;
 
 		Button selectContactButton;
+		EditText messageEditText;
+		Button sendSmsMessageButton;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -33,6 +36,12 @@ namespace sms2
 			selectContactButton = FindViewById<Button> (Resource.Id.selectContactButton);
 			selectContactButton.Text = ContactDataFormatter.Format (contactData);
 
+			messageEditText = FindViewById<EditText> (Resource.Id.message1EditText);
+			messageEditText.Text = MessageItemFormatter.Format (messageItem);
+
+			sendSmsMessageButton = FindViewById<Button> (Resource.Id.sendSmsButton);
+			sendSmsMessageButton.Text = "Send SMS";
+
 			selectContactButton.Click += delegate {
 				//Create a new intent for choosing a contact
 				var contactPickerIntent = new Intent (Intent.ActionPick, Android.Provider.ContactsContract.Contacts.ContentUri);
@@ -40,6 +49,17 @@ namespace sms2
 				// Start the contact picker expecting a result with the resultCode '101'  
 				StartActivityForResult (contactPickerIntent, SELECT_CONTACT_SUCCESS_RESULT);
 			};
+
+			sendSmsMessageButton.Click += delegate(object sender, EventArgs e) {
+				if (contactData!=null)
+					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageEditText.Text, null, null);
+			};
+
+//			messageEditText.AfterTextChanged += delegate(object sender, Android.Text.AfterTextChangedEventArgs e) {
+//				messageItem = new MessageItem(e.ToString());
+//			};
+			//message1EditText.Click
+			//message1EditText.LongClick
 		}
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -49,8 +69,8 @@ namespace sms2
 			base.OnActivityResult(requestCode, resultCode, data);
 
 			switch (requestCode) {
-			case SELECT_CONTACT_SUCCESS_RESULT:
-				SelectContactHandling (resultCode, data);
+				case SELECT_CONTACT_SUCCESS_RESULT:
+					SelectContactHandling (resultCode, data);
 				break;
 			}
 		}

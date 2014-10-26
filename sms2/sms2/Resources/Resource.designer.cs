@@ -60,8 +60,17 @@ namespace sms2
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050002
+			public const int message1EditText = 2131034114;
+			
+			// aapt resource value: 0x7f050001
+			public const int messagesTextView = 2131034113;
+			
 			// aapt resource value: 0x7f050000
 			public const int selectContactButton = 2131034112;
+			
+			// aapt resource value: 0x7f050003
+			public const int sendSmsButton = 2131034115;
 			
 			static Id()
 			{

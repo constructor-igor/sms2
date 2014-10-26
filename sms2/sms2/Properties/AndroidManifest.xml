@@ -3,4 +3,5 @@
 	<uses-sdk android:minSdkVersion="14" />
 	<application android:label="sms2"></application>
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
+	<uses-permission android:name="android.permission.SEND_SMS" />
 </manifest>
