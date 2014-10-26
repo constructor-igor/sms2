@@ -44,6 +44,8 @@ namespace sms2
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
 		{
+			Log.Debug ("OnActivityResult", string.Format("requestCode = {0}, resultCode = {1}", requestCode, resultCode));
+
 			base.OnActivityResult(requestCode, resultCode, data);
 
 			switch (requestCode) {
@@ -62,7 +64,8 @@ namespace sms2
 
 				string displayName = contacts.GetString(contacts.GetColumnIndex("display_name"));
 
-				//ContactsContract.CommonDataKinds.StructuredName.DisplayName
+				string columnName = ContactsContract.CommonDataKinds.StructuredName.DisplayName;
+				string displayName2 = contacts.GetString(contacts.GetColumnIndex(columnName));
 
 				int indexNumber = contacts.GetColumnIndex(ContactsContract.CommonDataKinds.Phone.Number);
 				string phoneNumber = contacts.GetString(indexNumber);
