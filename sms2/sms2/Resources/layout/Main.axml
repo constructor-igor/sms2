@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:text="Contact: &lt;contact&gt;" />
     <TextView
-        android:text="Messages:"
+        android:text="Message:"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="36.8dp"
