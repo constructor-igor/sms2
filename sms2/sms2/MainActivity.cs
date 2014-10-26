@@ -62,13 +62,11 @@ namespace sms2
 				var contacts = ManagedQuery(ContactsContract.CommonDataKinds.Phone.ContentUri, null, "_id = ?", new string[] { id }, null);
 				contacts.MoveToFirst();
 
-				string displayName = contacts.GetString(contacts.GetColumnIndex("display_name"));
+				int displayedNameIndexNumber = contacts.GetColumnIndex ("display_name");
+				string displayName = contacts.GetString(displayedNameIndexNumber);
 
-				string columnName = ContactsContract.CommonDataKinds.StructuredName.DisplayName;
-				string displayName2 = contacts.GetString(contacts.GetColumnIndex(columnName));
-
-				int indexNumber = contacts.GetColumnIndex(ContactsContract.CommonDataKinds.Phone.Number);
-				string phoneNumber = contacts.GetString(indexNumber);
+				int phoneNumberIndexNumber = contacts.GetColumnIndex(ContactsContract.CommonDataKinds.Phone.Number);			
+				string phoneNumber = contacts.GetString(phoneNumberIndexNumber);
 
 				contactData = new ContactData (displayName, phoneNumber);
 
