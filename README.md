@@ -1,4 +1,4 @@
 sms2
 ====
 
-simple android sms messanger
+simple android sms messenger
