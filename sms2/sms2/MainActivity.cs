@@ -17,6 +17,10 @@ namespace sms2
 	{
 		const int SELECT_CONTACT_SUCCESS_RESULT = 101;
 
+		ContactData contactData = null;
+
+		Button selectContactButton;
+
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
@@ -26,8 +30,8 @@ namespace sms2
 
 			// Get our button from the layout resource,
 			// and attach an event to it
-			Button selectContactButton = FindViewById<Button> (Resource.Id.selectContactButton);
-
+			selectContactButton = FindViewById<Button> (Resource.Id.selectContactButton);
+			selectContactButton.Text = "<Select contact>";
 
 			selectContactButton.Click += delegate {
 				//Create a new intent for choosing a contact
@@ -51,9 +55,22 @@ namespace sms2
 
 		void SelectContactHandling(Result resultCode, Intent data)
 		{
-			if (resultCode == Result.Ok && data!=null) {
-			}
+			if (resultCode == Result.Ok && data!=null && data.Data!=null) {
+				var id = data.Data.LastPathSegment;
+				var contacts = ManagedQuery(ContactsContract.CommonDataKinds.Phone.ContentUri, null, "_id = ?", new string[] { id }, null);
+				contacts.MoveToFirst();
 
+				string displayName = contacts.GetString(contacts.GetColumnIndex("display_name"));
+
+				//ContactsContract.CommonDataKinds.StructuredName.DisplayName
+
+				int indexNumber = contacts.GetColumnIndex(ContactsContract.CommonDataKinds.Phone.Number);
+				string phoneNumber = contacts.GetString(indexNumber);
+
+				contactData = new ContactData (displayName, phoneNumber);
+
+				selectContactButton.Text = String.Format ("{0}: {1}", contactData.DisplayedName, contactData.PhoneNumber);
+			}
 		}
 	}
 }
