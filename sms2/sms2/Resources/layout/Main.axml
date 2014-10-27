@@ -25,4 +25,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/sendSmsButton" />
+    <Button
+        android:text="Send &quot;Could you call me?&quot;"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/send1Button" />
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/send2Button" />
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/send3Button" />
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/send4Button" />
 </LinearLayout>

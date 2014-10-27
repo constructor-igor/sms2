@@ -69,6 +69,18 @@ namespace sms2
 			// aapt resource value: 0x7f050000
 			public const int selectContactButton = 2131034112;
 			
+			// aapt resource value: 0x7f050004
+			public const int send1Button = 2131034116;
+			
+			// aapt resource value: 0x7f050005
+			public const int send2Button = 2131034117;
+			
+			// aapt resource value: 0x7f050006
+			public const int send3Button = 2131034118;
+			
+			// aapt resource value: 0x7f050007
+			public const int send4Button = 2131034119;
+			
 			// aapt resource value: 0x7f050003
 			public const int sendSmsButton = 2131034115;
 			
