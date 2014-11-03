@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" package="constructor.sms2" android:versionName="0.1">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="constructor.sms2" android:versionName="0.15" android:versionCode="2">
 	<uses-sdk android:minSdkVersion="14" />
 	<application android:label="sms2" android:icon="@drawable/icon"></application>
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
