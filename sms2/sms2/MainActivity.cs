@@ -57,8 +57,8 @@ namespace sms2
 	public class MainActivity : Activity
 	{
 		const int SELECT_CONTACT_SUCCESS_RESULT = 101;
-		string[] definedMessages = new string[] {"Could you call me?", "I am here", "I wait you", "How are you?"};
-		Button[] definedButtons = new Button[4];
+		string[] definedMessages = new string[] {"Could you call me?", "I am here", "I wait you", "How are you?", "Yo!"};
+		Button[] definedButtons = new Button[5];
 
 		ContactData contactData = null;
 		MessageItem messageItem = null;
@@ -93,6 +93,7 @@ namespace sms2
 			definedButtons[1] = FindViewById<Button> (Resource.Id.send2Button);
 			definedButtons[2] = FindViewById<Button> (Resource.Id.send3Button);
 			definedButtons[3] = FindViewById<Button> (Resource.Id.send4Button);
+			definedButtons[4] = FindViewById<Button> (Resource.Id.send5Button);
 
 			for (int i = 0; i < definedMessages.Length; i++) {
 				definedButtons[i].Text = String.Format ("Send '{0}'", definedMessages [i]);
