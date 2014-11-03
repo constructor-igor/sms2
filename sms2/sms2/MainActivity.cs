@@ -114,18 +114,18 @@ namespace sms2
 			var piDelivered = PendingIntent.GetBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
 
 			sendSmsMessageButton.Click += delegate(object sender, EventArgs e) {
-				if (contactData != null && !contactData.Empty)
-				{
-					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageEditText.Text, piSent, piDelivered);
+				var messageText = messageEditText.Text;
+				if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText)) {
+					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageText, piSent, piDelivered);
 				}
 			};
 
 			for (int i = 0; i < definedButtons.Length; i++) 
 			{
-				string message = definedMessages [i];
+				string messageText = definedMessages [i];
 				definedButtons [i].Click += delegate(object sender, EventArgs e) {
-					if (contactData != null && !contactData.Empty)
-						SmsManager.Default.SendTextMessage (contactData.PhoneNumber, null, message, null, null);
+					if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText))
+						SmsManager.Default.SendTextMessage (contactData.PhoneNumber, null, messageText, piSent, piDelivered);
 				};
 			};
 		}
