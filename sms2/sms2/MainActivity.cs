@@ -63,6 +63,9 @@ namespace sms2
 		ContactData contactData = null;
 		MessageItem messageItem = null;
 
+		private BroadcastReceiver m_smsSentBroadcastReceiver;
+		private BroadcastReceiver m_smsDeliveredBroadcastReceiver;
+
 		Button selectContactButton;
 		EditText messageEditText;
 		Button sendSmsMessageButton;
@@ -107,9 +110,14 @@ namespace sms2
 				StartActivityForResult (contactPickerIntent, SELECT_CONTACT_SUCCESS_RESULT);
 			};
 
+			var piSent = PendingIntent.GetBroadcast(this, 0, new Intent("SMS_SENT"), 0);
+			var piDelivered = PendingIntent.GetBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
+
 			sendSmsMessageButton.Click += delegate(object sender, EventArgs e) {
 				if (contactData != null && !contactData.Empty)
-					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageEditText.Text, null, null);
+				{
+					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageEditText.Text, piSent, piDelivered);
+				}
 			};
 
 			for (int i = 0; i < definedButtons.Length; i++) 
@@ -120,12 +128,6 @@ namespace sms2
 						SmsManager.Default.SendTextMessage (contactData.PhoneNumber, null, message, null, null);
 				};
 			};
-
-//			messageEditText.AfterTextChanged += delegate(object sender, Android.Text.AfterTextChangedEventArgs e) {
-//				messageItem = new MessageItem(e.ToString());
-//			};
-			//message1EditText.Click
-			//message1EditText.LongClick
 		}
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -139,6 +141,26 @@ namespace sms2
 					SelectContactHandling (resultCode, data);
 				break;
 			}
+		}
+
+		protected override void OnResume()
+		{
+			Log.Debug ("OnResume", "");
+			base.OnResume ();
+
+			m_smsSentBroadcastReceiver = new SMSSentReceiver();
+			m_smsDeliveredBroadcastReceiver = new SMSDeliveredReceiver();
+
+			RegisterReceiver(m_smsSentBroadcastReceiver, new IntentFilter("SMS_SENT"));
+			RegisterReceiver(m_smsDeliveredBroadcastReceiver, new IntentFilter("SMS_DELIVERED"));
+		}
+		protected override void OnPause()
+		{
+			Log.Debug ("OnPause", "");
+			base.OnPause ();
+
+			UnregisterReceiver(m_smsSentBroadcastReceiver);
+			UnregisterReceiver(m_smsDeliveredBroadcastReceiver);
 		}
 
 		protected override void OnDestroy()
@@ -167,6 +189,45 @@ namespace sms2
 			}
 		}
 	}
+
+	[BroadcastReceiver(Exported = true, Permission = "//receiver/@android:android.permission.SEND_SMS")]
+	public class SMSSentReceiver : BroadcastReceiver
+	{
+		public override void OnReceive(Context context, Intent intent)
+		{
+			switch ((int)ResultCode)
+			{
+			case (int)Result.Ok:
+				Toast.MakeText(Application.Context, "SMS has been sent", ToastLength.Short).Show();
+				break;
+			case (int)SmsResultError.GenericFailure:
+				Toast.MakeText(Application.Context, "Generic Failure", ToastLength.Short).Show();
+				break;
+			case (int)SmsResultError.NoService:
+				Toast.MakeText(Application.Context, "No Service", ToastLength.Short).Show();
+				break;
+			case (int)SmsResultError.NullPdu:
+				Toast.MakeText(Application.Context, "Null PDU", ToastLength.Short).Show();
+				break;
+			case (int)SmsResultError.RadioOff:
+				Toast.MakeText(Application.Context, "Radio Off", ToastLength.Short).Show();
+				break;
+			}
+		}
+	}
+	[BroadcastReceiver(Exported = true, Permission = "//receiver/@android:android.permission.SEND_SMS")]
+	public class SMSDeliveredReceiver : BroadcastReceiver
+	{
+		public override void OnReceive(Context context, Intent intent)
+		{
+			switch ((int)ResultCode) {
+			case (int)Result.Ok:
+				Toast.MakeText (Application.Context, "SMS Delivered", ToastLength.Short).Show ();
+				break;
+			case (int)Result.Canceled:
+				Toast.MakeText (Application.Context, "SMS not delivered", ToastLength.Short).Show ();
+				break;
+			}
+		}
+	}
 }
-
-
