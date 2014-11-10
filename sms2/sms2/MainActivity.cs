@@ -56,6 +56,7 @@ namespace sms2
 	[Activity (Label = "sms2", MainLauncher = true)]
 	public class MainActivity : Activity
 	{
+		const string SHORT_URL_TO_GOOGLE_PLAY_SMS2 = "http://goo.gl/9hAuWt";
 		const int SELECT_CONTACT_SUCCESS_RESULT = 101;
 		string[] definedMessages = new string[] {"Could you call me?", "I am here", "I wait you", "How are you?", "Yo!"};
 		Button[] definedButtons = new Button[5];
@@ -117,6 +118,7 @@ namespace sms2
 				var messageText = messageEditText.Text;
 				if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText)) {
 					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageText, piSent, piDelivered);
+					AddSentSmsToHistory(contactData.PhoneNumber, messageText);
 				}
 			};
 
@@ -124,11 +126,13 @@ namespace sms2
 			{
 				string messageText = definedMessages [i];
 				definedButtons [i].Click += delegate(object sender, EventArgs e) {
-					if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText))
+					if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText)) {						
 						SmsManager.Default.SendTextMessage (contactData.PhoneNumber, null, messageText, piSent, piDelivered);
+						AddSentSmsToHistory(contactData.PhoneNumber, messageText);
+					}
 				};
 			};
-		}
+		}			
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
 		{
@@ -186,6 +190,29 @@ namespace sms2
 				contactData = new ContactData (displayName, phoneNumber);
 
 				selectContactButton.Text = ContactDataFormatter.Format (contactData);
+			}
+		}
+
+		/*
+		 * Add sms to history requires 2 permissions:
+		 * <uses-permission android:name="android.permission.WRITE_SMS" />
+	     * <uses-permission android:name="android.permission.READ_SMS" />
+		 * 
+		 */
+		private void AddSentSmsToHistory(String address, String message) 
+		{
+			try {
+				ContentValues values = new ContentValues();
+				values.Put("address", address);
+				values.Put("body", message);
+				//values.Put("body", String.Format("{0} (sent by sms2, {1})", message, SHORT_URL_TO_GOOGLE_PLAY_SMS2));
+				//values.Put("date", DateTime.Now.Ticks);
+				//getContentResolver.Insert(Android.Net.Uri.Parse("content://sms/sent"), values);
+				ContentResolver.Insert(Android.Net.Uri.Parse("content://sms/sent"), values);
+			}
+			catch (Exception e) {
+				//e.printStackTrace();
+				Toast.MakeText(Application.Context, String.Format("SMS cannot be stored, becasue '{0}'", e.Message), ToastLength.Long).Show();
 			}
 		}
 	}
