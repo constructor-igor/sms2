@@ -207,6 +207,10 @@ namespace sms2
 				values.Put("body", message);
 				//values.Put("body", String.Format("{0} (sent by sms2, {1})", message, SHORT_URL_TO_GOOGLE_PLAY_SMS2));
 				//values.Put("date", DateTime.Now.Ticks);
+				//long milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+				var totalPeriod = DateTime.UtcNow - new DateTime(1970, 1, 1);
+				long milliseconds = (long)totalPeriod.TotalMilliseconds;
+				values.Put("date", milliseconds);
 				//getContentResolver.Insert(Android.Net.Uri.Parse("content://sms/sent"), values);
 				ContentResolver.Insert(Android.Net.Uri.Parse("content://sms/sent"), values);
 			}
