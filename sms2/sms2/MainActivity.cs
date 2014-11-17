@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Android.App;
 using Android.Content;
@@ -9,6 +11,7 @@ using Android.OS;
 using Android.Telephony;
 using Android.Provider;
 using Android.Util;
+using Android.Locations;
 
 namespace sms2
 {
@@ -54,11 +57,11 @@ namespace sms2
 	}
 
 	[Activity (Label = "sms2", MainLauncher = true)]
-	public class MainActivity : Activity
+	public class MainActivity : Activity, ILocationListener
 	{
 		const string SHORT_URL_TO_GOOGLE_PLAY_SMS2 = "http://goo.gl/9hAuWt";
 		const int SELECT_CONTACT_SUCCESS_RESULT = 101;
-		string[] definedMessages = new string[] {"Could you call me?", "I am here", "I wait you", "How are you?", "Yo!"};
+		string[] definedMessages = new string[] {"Could you call me?", "I am here @map", "I wait you", "How are you?", "Yo!"};
 		Button[] definedButtons = new Button[5];
 
 		ContactData contactData = null;
@@ -66,6 +69,10 @@ namespace sms2
 
 		private BroadcastReceiver m_smsSentBroadcastReceiver;
 		private BroadcastReceiver m_smsDeliveredBroadcastReceiver;
+
+		private Location _currentLocation;
+		private LocationManager _locationManager;
+		private String _locationProvider;
 
 		Button selectContactButton;
 		EditText messageEditText;
@@ -119,6 +126,7 @@ namespace sms2
 			sendSmsMessageButton.Click += delegate(object sender, EventArgs e) {
 				var messageText = messageEditText.Text;
 				if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText)) {
+					messageText = Processing(messageText);
 					SmsManager.Default.SendTextMessage(contactData.PhoneNumber, null, messageText, piSent, piDelivered);
 					AddSentSmsToHistory(contactData.PhoneNumber, messageText);
 				}
@@ -128,12 +136,15 @@ namespace sms2
 			{
 				string messageText = definedMessages [i];
 				definedButtons [i].Click += delegate(object sender, EventArgs e) {
-					if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText)) {						
+					if (contactData != null && !contactData.Empty && !String.IsNullOrEmpty(messageText)) {
+						messageText = Processing(messageText);
 						SmsManager.Default.SendTextMessage (contactData.PhoneNumber, null, messageText, piSent, piDelivered);
 						AddSentSmsToHistory(contactData.PhoneNumber, messageText);
 					}
 				};
 			};
+
+			InitializeLocationManager();
 		}			
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -159,6 +170,8 @@ namespace sms2
 
 			RegisterReceiver(m_smsSentBroadcastReceiver, new IntentFilter("SMS_SENT"));
 			RegisterReceiver(m_smsDeliveredBroadcastReceiver, new IntentFilter("SMS_DELIVERED"));
+
+			_locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
 		}
 		protected override void OnPause()
 		{
@@ -170,6 +183,8 @@ namespace sms2
 
 			UnregisterReceiver(m_smsSentBroadcastReceiver);
 			UnregisterReceiver(m_smsDeliveredBroadcastReceiver);
+
+			_locationManager.RemoveUpdates(this);
 		}
 
 		protected override void OnDestroy()
@@ -177,6 +192,36 @@ namespace sms2
 			messageItem = new MessageItem (messageEditText.Text);
 			SettingsLoader.Save(new SettingsData(contactData, messageItem));
 			base.OnDestroy ();
+		}
+
+		#region ILocationListener
+		public void OnLocationChanged(Location location) 
+		{
+			_currentLocation = location;
+		}
+		public void OnProviderDisabled(string provider) {}
+		public void OnProviderEnabled(string provider) {}
+		public void OnStatusChanged(string provider, Availability status, Bundle extras) {}
+		#endregion
+
+		string Processing(string messageText)
+		{
+			if (_currentLocation != null)
+				return messageText;
+			string linkToGoogleMap = String.Format ("https://www.google.co.il/maps/place/{0}N+{1}E", _currentLocation.Latitude, _currentLocation.Longitude);
+
+			if (messageText == "@map")
+				return linkToGoogleMap;
+			if (messageText.StartsWith ("@map ")) {
+				return messageText.Replace ("@map ", linkToGoogleMap + " ");
+			}
+			if (messageText.EndsWith(" @map")) {
+				return messageText.Replace (" @map", " " + linkToGoogleMap);
+			}
+			if (messageText.IndexOf(" @map ")!=-1) {
+				return messageText.Replace (" @map ", " " + linkToGoogleMap + " ");
+			}
+			return messageText;
 		}
 
 		void SelectContactHandling(Result resultCode, Intent data)
@@ -222,6 +267,25 @@ namespace sms2
 			catch (Exception e) {
 				//e.printStackTrace();
 				Toast.MakeText(Application.Context, String.Format("SMS cannot be stored, becasue '{0}'", e.Message), ToastLength.Long).Show();
+			}
+		}
+
+		void InitializeLocationManager()
+		{
+			_locationManager = (LocationManager)GetSystemService(LocationService);
+			Criteria criteriaForLocationService = new Criteria
+			{
+				Accuracy = Accuracy.Fine
+			};
+			IList<string> acceptableLocationProviders = _locationManager.GetProviders(criteriaForLocationService, true);
+
+			if (acceptableLocationProviders.Any())
+			{
+				_locationProvider = acceptableLocationProviders.First();
+			}
+			else
+			{
+				_locationProvider = String.Empty;
 			}
 		}
 	}
