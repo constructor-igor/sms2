@@ -89,6 +89,8 @@ namespace sms2
 
 			messageEditText = FindViewById<EditText> (Resource.Id.message1EditText);
 			messageEditText.Text = MessageItemFormatter.Format (messageItem);
+			// http://stackoverflow.com/questions/6217378/place-cursor-at-the-end-of-text-in-edittext
+			messageEditText.SetSelection (messageEditText.Text.Length);
 
 			sendSmsMessageButton = FindViewById<Button> (Resource.Id.sendSmsButton);
 			sendSmsMessageButton.Text = "Send SMS";
@@ -162,6 +164,9 @@ namespace sms2
 		{
 			Log.Debug ("OnPause", "");
 			base.OnPause ();
+
+			messageItem = new MessageItem (messageEditText.Text);
+			SettingsLoader.Save(new SettingsData(contactData, messageItem));
 
 			UnregisterReceiver(m_smsSentBroadcastReceiver);
 			UnregisterReceiver(m_smsDeliveredBroadcastReceiver);
