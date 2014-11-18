@@ -206,9 +206,9 @@ namespace sms2
 
 		string Processing(string messageText)
 		{
-			if (_currentLocation != null)
+			if (_currentLocation == null)
 				return messageText;
-			string linkToGoogleMap = String.Format ("https://www.google.co.il/maps/place/{0}N+{1}E", _currentLocation.Latitude, _currentLocation.Longitude);
+			string linkToGoogleMap = String.Format ("https://www.google.co.il/maps/place/{0}N{1}E", _currentLocation.Latitude, _currentLocation.Longitude);
 
 			if (messageText == "@map")
 				return linkToGoogleMap;
