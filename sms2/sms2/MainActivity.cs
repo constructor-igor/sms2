@@ -95,6 +95,9 @@ namespace sms2
 			// and attach an event to it
 			selectContactButton = FindViewById<Button> (Resource.Id.selectContactButton);
 			selectContactButton.Text = ContactDataFormatter.Format (contactData);
+			selectContactButton.TextChanged += delegate(object sender, Android.Text.TextChangedEventArgs e) {
+				UpdateButtonsStatus();
+			};
 
 			messageEditText = FindViewById<EditText> (Resource.Id.message1EditText);
 			messageEditText.Text = MessageItemFormatter.Format (messageItem);
@@ -146,7 +149,8 @@ namespace sms2
 				};
 			};
 
-			InitializeLocationManager();
+			UpdateButtonsStatus ();
+			InitializeLocationManager ();
 		}			
 
 		protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
@@ -245,6 +249,14 @@ namespace sms2
 			}
 		}
 
+		private void UpdateButtonsStatus()
+		{
+			sendSmsMessageButton.Enabled = ContactDataFormatter.IsContactActual(selectContactButton.Text);
+			foreach (Button button in definedButtons)
+			{
+				button.Enabled = ContactDataFormatter.IsContactActual(selectContactButton.Text);
+			}
+		}
 		/*
 		 * Add sms to history requires 2 permissions:
 		 * <uses-permission android:name="android.permission.WRITE_SMS" />

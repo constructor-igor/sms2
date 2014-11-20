@@ -22,11 +22,16 @@ namespace sms2
 
 	public class ContactDataFormatter
 	{
+		const string DEFAULT_CONTACT_TEXT = "<Select contact>";
 		public static string Format(ContactData contactData)
 		{
 			if (contactData == null || contactData.Empty)
-				return "<Select contact>";
+				return DEFAULT_CONTACT_TEXT;
 			return String.Format ("{0}: {1}", contactData.DisplayedName, contactData.PhoneNumber);
+		}
+		public static bool IsContactActual(string contactText)
+		{
+			return (contactText != DEFAULT_CONTACT_TEXT) && !String.IsNullOrWhiteSpace (contactText);
 		}
 	}
 }
