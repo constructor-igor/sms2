@@ -59,9 +59,11 @@ namespace sms2
 	[Activity (Label = "sms2", MainLauncher = true)]
 	public class MainActivity : Activity, ILocationListener
 	{
+		const string VARIABLE_PREFIX = "$";
+		const string VARIABLE_GOOGLE_MAP = VARIABLE_PREFIX + "map";
 		const string SHORT_URL_TO_GOOGLE_PLAY_SMS2 = "http://goo.gl/9hAuWt";
 		const int SELECT_CONTACT_SUCCESS_RESULT = 101;
-		string[] definedMessages = new string[] {"Could you call me?", "I am here @map", "I wait you", "How are you?", "Yo!"};
+		string[] definedMessages = new string[] {"Could you call me?", String.Format("I am here {0}", VARIABLE_GOOGLE_MAP), "I wait you", "How are you?", "Yo!"};
 		Button[] definedButtons = new Button[5];
 
 		ContactData contactData = null;
@@ -210,16 +212,16 @@ namespace sms2
 				return messageText;
 			string linkToGoogleMap = String.Format ("https://www.google.co.il/maps/place/{0}N{1}E", _currentLocation.Latitude, _currentLocation.Longitude);
 
-			if (messageText == "@map")
+			if (messageText == VARIABLE_GOOGLE_MAP)
 				return linkToGoogleMap;
-			if (messageText.StartsWith ("@map ")) {
-				return messageText.Replace ("@map ", linkToGoogleMap + " ");
+			if (messageText.StartsWith (VARIABLE_GOOGLE_MAP+" ")) {
+				return messageText.Replace (VARIABLE_GOOGLE_MAP+" ", linkToGoogleMap + " ");
 			}
-			if (messageText.EndsWith(" @map")) {
-				return messageText.Replace (" @map", " " + linkToGoogleMap);
+			if (messageText.EndsWith(" "+VARIABLE_GOOGLE_MAP)) {
+				return messageText.Replace (" "+VARIABLE_GOOGLE_MAP, " " + linkToGoogleMap);
 			}
-			if (messageText.IndexOf(" @map ")!=-1) {
-				return messageText.Replace (" @map ", " " + linkToGoogleMap + " ");
+			if (messageText.IndexOf(" "+VARIABLE_GOOGLE_MAP+" ")!=-1) {
+				return messageText.Replace (" "+VARIABLE_GOOGLE_MAP+" ", " " + linkToGoogleMap + " ");
 			}
 			return messageText;
 		}
