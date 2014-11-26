@@ -42,16 +42,22 @@ namespace sms2
 		}
 		static public SettingsData Load()
 		{
-			var prefs = Application.Context.ApplicationContext.GetSharedPreferences ("sms2", Android.Content.FileCreationMode.Private);
-			int version = prefs.GetInt ("version", 0);
-			switch (version) {
-				case 1:
-					string displayedName = prefs.GetString ("name", "");
-					string phoneNumber = prefs.GetString ("number", "");
-					string message = prefs.GetString ("message", "");
-					return new SettingsData (new ContactData (displayedName, phoneNumber), new MessageItem (message));
-				default:
-					return new SettingsData (new ContactData (null, null), new MessageItem (null));
+			try
+			{
+				var prefs = Application.Context.ApplicationContext.GetSharedPreferences ("sms2", Android.Content.FileCreationMode.Private);
+				int version = prefs.GetInt ("version", 0);
+				switch (version) {
+					case 1:
+						string displayedName = prefs.GetString ("name", "");
+						string phoneNumber = prefs.GetString ("number", "");
+						string message = prefs.GetString ("message", "");
+						return new SettingsData (new ContactData (displayedName, phoneNumber), new MessageItem (message));
+					default:
+						return new SettingsData (new ContactData (null, null), new MessageItem (null));
+				}
+			}
+			catch {
+				return new SettingsData (new ContactData (null, null), new MessageItem (null));
 			}
 		}
 	}
@@ -177,7 +183,14 @@ namespace sms2
 			RegisterReceiver(m_smsSentBroadcastReceiver, new IntentFilter("SMS_SENT"));
 			RegisterReceiver(m_smsDeliveredBroadcastReceiver, new IntentFilter("SMS_DELIVERED"));
 
-			_locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
+			try
+			{
+				if (!String.IsNullOrEmpty(_locationProvider))
+					_locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
+			}
+			catch(Exception e) {
+				Toast.MakeText(Application.Context, String.Format("RequestLocationUpdates failed, becasue '{0}' in '{1}'", e.Message, e.StackTrace), ToastLength.Long).Show();
+			}
 		}
 		protected override void OnPause()
 		{
@@ -301,6 +314,7 @@ namespace sms2
 			{
 				_locationProvider = String.Empty;
 			}
+			Log.Debug ("InitializeLocationManager", "_locationProvider: " + _locationProvider);
 		}
 	}
 
