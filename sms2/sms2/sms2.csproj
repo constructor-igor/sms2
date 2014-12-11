@@ -49,6 +49,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ContactData.cs" />
     <Compile Include="MessageItem.cs" />
+    <Compile Include="Widget.cs">
+      <DeployService-Deploy>True</DeployService-Deploy>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
