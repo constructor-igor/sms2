@@ -4,4 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="selectContact"><![CDATA[<select contact>]]></string>
+    <string name="messageTitle">Message:</string>
+    <string name="sendSMS">Send SMS</string>
 </resources>

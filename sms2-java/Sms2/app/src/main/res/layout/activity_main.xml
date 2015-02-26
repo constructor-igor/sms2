@@ -14,4 +14,44 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/titleOfEditText"
+        android:layout_below="@+id/selectContactButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:text="@string/messageTitle"
+        android:enabled="true"
+        android:editable="false"
+        android:labelFor="@+id/messageEditText" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/messageEditText"
+        android:layout_below="@+id/titleOfEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:editable="true"
+        android:autoText="false"
+        android:clickable="true"
+        android:elegantTextHeight="false"
+        android:enabled="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sendSMS"
+        android:id="@+id/sendSmsButton"
+        android:layout_below="@+id/messageEditText"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/messageEditText"
+        android:layout_alignEnd="@+id/messageEditText" />
+
 </RelativeLayout>
