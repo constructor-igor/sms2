@@ -1,13 +1,15 @@
 package constructor.sms2;
 
 import android.app.PendingIntent;
-import android.telephony.SmsManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +20,7 @@ import android.widget.EditText;
 public class MainActivity extends ActionBarActivity {
     static final int SELECT_CONTACT_SUCCESS_RESULT = 101;
     Button selectContactButton;
-    Button sendSmsButton;
+    Button sendSmsMessageButton;
     EditText customMessageEditText;
 
     @Override
@@ -27,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         selectContactButton = (Button) findViewById(R.id.selectContactButton);
-        sendSmsButton = (Button) findViewById(R.id.sendSmsButton);
+        sendSmsMessageButton = (Button) findViewById(R.id.sendSmsButton);
         customMessageEditText = (EditText) findViewById(R.id.messageEditText);
 
         selectContactButton.setOnClickListener(new View.OnClickListener() {
@@ -43,11 +45,32 @@ public class MainActivity extends ActionBarActivity {
                 startActivityForResult(contactPickerIntent, SELECT_CONTACT_SUCCESS_RESULT);
             }
         });
+//        selectContactButton.setOnEditorActionListener(new Button.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//            }
+//        });
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                //after text changed
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateButtonsStatus();
+            }
+        };
+        selectContactButton.addTextChangedListener(textWatcher);
 
         final PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
         final PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
 
-        sendSmsButton.setOnClickListener(new View.OnClickListener() {
+        sendSmsMessageButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String phoneNo = "";
                 String messageText = customMessageEditText.getText().toString();
@@ -56,6 +79,9 @@ public class MainActivity extends ActionBarActivity {
                 smsManager.sendTextMessage(phoneNo, null, messageText, piSent, piDelivered);
             }
         });
+
+
+        updateButtonsStatus();
     }
 
     @Override
@@ -111,6 +137,8 @@ public class MainActivity extends ActionBarActivity {
             column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
             String phoneNumber = cursor.getString(column);
 
+            cursor.close();
+
             ContactData contactData = new ContactData (displayName, phoneNumber);
 
             String selectContactText = ContactDataFormatter.format(contactData);
@@ -119,4 +147,12 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private void updateButtonsStatus()
+    {
+        sendSmsMessageButton.setEnabled(ContactDataFormatter.isContactActual(selectContactButton.getText().toString()));
+//        foreach (Button button in definedButtons)
+//        {
+//            button.Enabled = ContactDataFormatter.IsContactActual(selectContactButton.Text);
+//        }
+    }
 }

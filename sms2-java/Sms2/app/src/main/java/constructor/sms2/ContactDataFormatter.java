@@ -11,6 +11,6 @@ public class ContactDataFormatter {
 
     public static boolean isContactActual(String contactText)
     {
-        return (contactText != DEFAULT_CONTACT_TEXT) && !contactText.isEmpty();
+        return !contactText.equalsIgnoreCase(DEFAULT_CONTACT_TEXT) && !contactText.isEmpty();
     }
 }
