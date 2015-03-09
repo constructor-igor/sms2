@@ -1,5 +1,7 @@
 package constructor.sms2;
 
+import android.app.PendingIntent;
+import android.telephony.SmsManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,10 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MainActivity extends ActionBarActivity {
     static final int SELECT_CONTACT_SUCCESS_RESULT = 101;
     Button selectContactButton;
+    Button sendSmsButton;
+    EditText customMessageEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,9 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         selectContactButton = (Button) findViewById(R.id.selectContactButton);
+        sendSmsButton = (Button) findViewById(R.id.sendSmsButton);
+        customMessageEditText = (EditText) findViewById(R.id.messageEditText);
+
         selectContactButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -33,6 +41,19 @@ public class MainActivity extends ActionBarActivity {
                 // Start the contact picker expecting a result with the resultCode '101'
                 //StartActivityForResult (contactPickerIntent, SELECT_CONTACT_SUCCESS_RESULT);
                 startActivityForResult(contactPickerIntent, SELECT_CONTACT_SUCCESS_RESULT);
+            }
+        });
+
+        final PendingIntent piSent = PendingIntent.getBroadcast(this, 0, new Intent("SMS_SENT"), 0);
+        final PendingIntent piDelivered = PendingIntent.getBroadcast(this, 0, new Intent("SMS_DELIVERED"), 0);
+
+        sendSmsButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String phoneNo = "";
+                String messageText = customMessageEditText.getText().toString();
+
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(phoneNo, null, messageText, piSent, piDelivered);
             }
         });
     }
@@ -60,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public void onActivityResult( int requestCode, int resultCode, Intent intent ) {
+    public void onActivityResult(int requestCode, int resultCode, Intent intent ) {
 
         Log.d("onActivityResult", String.format("requestCode = %d, resultCode= %d", requestCode, resultCode));
 
@@ -90,9 +111,12 @@ public class MainActivity extends ActionBarActivity {
             column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
             String phoneNumber = cursor.getString(column);
 
-            String selectContactText = String.format("%s: %s", displayName, phoneNumber);
+            ContactData contactData = new ContactData (displayName, phoneNumber);
+
+            String selectContactText = ContactDataFormatter.format(contactData);
 
             selectContactButton.setText(selectContactText);
         }
     }
+
 }
