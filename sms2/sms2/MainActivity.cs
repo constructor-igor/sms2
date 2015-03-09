@@ -293,7 +293,7 @@ namespace sms2
 			}
 			catch (Exception e) {
 				//e.printStackTrace();
-				Toast.MakeText(Application.Context, String.Format("SMS cannot be stored, becasue '{0}'", e.Message), ToastLength.Long).Show();
+				Toast.MakeText(Application.Context, String.Format("SMS cannot be stored, because '{0}'", e.Message), ToastLength.Long).Show();
 			}
 		}
 
