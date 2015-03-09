@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
     static final int SELECT_CONTACT_SUCCESS_RESULT = 101;
@@ -75,8 +76,14 @@ public class MainActivity extends ActionBarActivity {
                 String phoneNo = "";
                 String messageText = customMessageEditText.getText().toString();
 
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(phoneNo, null, messageText, piSent, piDelivered);
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(phoneNo, null, messageText, piSent, piDelivered);
+                } catch (Exception e)
+                {
+                    Toast.makeText(getApplicationContext(), "SMS failed, please try again later!", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
         });
 
