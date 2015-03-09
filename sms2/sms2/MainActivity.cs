@@ -188,8 +188,8 @@ namespace sms2
 				if (!String.IsNullOrEmpty(_locationProvider))
 					_locationManager.RequestLocationUpdates(_locationProvider, 0, 0, this);
 			}
-			catch(Exception e) {
-				Toast.MakeText(Application.Context, String.Format("RequestLocationUpdates failed, becasue '{0}' in '{1}'", e.Message, e.StackTrace), ToastLength.Long).Show();
+			catch (Exception e) {
+				Toast.MakeText(Application.Context, String.Format("RequestLocationUpdates failed, because '{0}' in '{1}'", e.Message, e.StackTrace), ToastLength.Long).Show();
 			}
 		}
 		protected override void OnPause()
